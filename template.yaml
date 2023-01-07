@@ -1,0 +1,77 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Simple template for a function behind an API gateway, supported by a DynamoDB table
+
+Globals:
+  Function:
+    Timeout: 100
+    Tracing: Active
+  Api:
+    TracingEnabled: true
+
+Resources:
+  FunctionOne:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A simple example includes a .NET Core WebAPI App with DynamoDB table.
+      CodeUri: ./src/SampleFunctions/FunctionOne/
+      Handler: FunctionOne.HandlerOne
+      Runtime: dotnet6
+      MemorySize: 1024
+      Environment:
+        Variables:
+          SAMPLE_TABLE: !Ref DatabaseTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref DatabaseTable
+      # Events:
+        # ProxyResource:
+        #   Type: HttpApi
+        #   Properties:
+        #     PayloadFormatVersion: '2.0'
+        #     Path: /{proxy+}
+        #     Method: ANY
+        # RootResource:
+        #   PayloadFormatVersion: '2.0'
+        #   Type: HttpApi
+        #   Properties:
+        #     Path: /
+        #     Method: ANY
+
+  DatabaseTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      TableName: simple-table
+      PrimaryKey:
+        Name: Id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
+  # ApplicationResourceGroup:
+  #   Type: AWS::ResourceGroups::Group
+  #   Properties:
+  #     Name:
+  #       Fn::Join:
+  #       - ''
+  #       - - ApplicationInsights-SAM-
+  #         - Ref: AWS::StackName
+  #     ResourceQuery:
+  #       Type: CLOUDFORMATION_STACK_1_0
+  # ApplicationInsightsMonitoring:
+  #   Type: AWS::ApplicationInsights::Application
+  #   Properties:
+  #     ResourceGroupName:
+  #       Fn::Join:
+  #       - ''
+  #       - - ApplicationInsights-SAM-
+  #         - Ref: AWS::StackName
+  #     AutoConfigurationEnabled: 'true'
+  #   DependsOn: ApplicationResourceGroup
+
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL
+    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
