@@ -13,9 +13,10 @@ A simple framework to develop, publish, and test simple services.
 
 ## Prerequisites
 
-* docker
-* localstack
-* samlocal
+* docker CLI
+* localstack CLI
+* samlocal CLI
+* dotnet CLI
 
 ## Optional developer tools
 
