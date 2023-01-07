@@ -2,6 +2,15 @@
 
 A simple framework to develop, publish, and test simple services.
 
+## In development
+
+- [x] Skeleton function, with template, local build and deployment support
+- [ ] Support full basic MVP artefacts
+  - [x] Functions
+  - [ ] Gateway
+  - [ ] Cognito
+  - [ ] Database
+
 ## Prerequisites
 
 * docker
