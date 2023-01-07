@@ -1,4 +1,4 @@
-# MVP application template
+# mvp-serverless-app-template
 
 A simple template to develop, publish, and test a simple service behind an API gateway.
 
