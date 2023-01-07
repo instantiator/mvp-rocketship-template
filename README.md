@@ -22,34 +22,8 @@ A simple framework to develop, publish, and test simple services.
 
 * VSCode AWS Toolkit extension
 
-## Build
+## Scripts
 
-```
-sam build
-```
-
-or
-
-```
-cd src/SampleFunctions
-dotnet build
-```
-
-## Deploy to localstack
-
-Start localstack:
-
-```
-localstack update all
-localstack start
-```
-
-Deploy to local:
-
-```
-samlocal deploy \
-  --stack-name mvp-functions \
-  --region eu-west-2 \
-  --capabilities CAPABILITY_IAM \
-  --resolve-s3
-```
+* `run-localstack.sh` - update and start localstack
+* `deploy-local.sh` - build and deploy to localstack
+* `stop-localstack.sh` - stop localstack
