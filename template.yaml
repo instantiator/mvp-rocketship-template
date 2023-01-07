@@ -11,12 +11,32 @@ Globals:
     TracingEnabled: true
 
 Resources:
+
+  Gateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: staging
+      Cors: "'*'" # very permissive CORS for now
+      # Cors: "'www.example.com'"  # SAM will automatically add AllowMethods with a list of methods for this API
+      # DefinitionBody: # Pull in an OpenApi definition from S3
+      #   'Fn::Transform':
+      #     Name: 'AWS::Include'
+      #     # Replace "bucket" with your bucket name
+      #     Parameters:
+      #       Location: s3://bucket/swagger.yaml
+      # Auth:
+      #   DefaultAuthorizer: MyCognitoAuthorizer
+      #   Authorizers:
+      #     MyCognitoAuthorizer:
+      #       UserPoolArn:
+      #         Fn::GetAtt: [MyCognitoUserPool, Arn]
+     
   FunctionOne:
     Type: AWS::Serverless::Function
     Properties:
       Description: A simple example includes a .NET Core WebAPI App with DynamoDB table.
       CodeUri: ./src/SampleFunctions/FunctionOne/
-      Handler: FunctionOne.HandlerOne
+      Handler: FunctionOne::FunctionOne.HandlerOne::Handle
       Runtime: dotnet6
       MemorySize: 1024
       Environment:
@@ -25,19 +45,21 @@ Resources:
       Policies:
       - DynamoDBCrudPolicy:
           TableName: !Ref DatabaseTable
-      # Events:
-        # ProxyResource:
-        #   Type: HttpApi
-        #   Properties:
-        #     PayloadFormatVersion: '2.0'
-        #     Path: /{proxy+}
-        #     Method: ANY
-        # RootResource:
-        #   PayloadFormatVersion: '2.0'
-        #   Type: HttpApi
-        #   Properties:
-        #     Path: /
-        #     Method: ANY
+      Events:
+        ProxyResource:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/{proxy+}
+            Method: get # was ANY
+            RestApiId:
+              Ref: Gateway
+        RootResource:
+          Type: Api
+          Properties:
+            Path: /FunctionOne
+            Method: get # was ANY
+            RestApiId:
+              Ref: Gateway
 
   DatabaseTable:
     Type: AWS::Serverless::SimpleTable
@@ -72,6 +94,6 @@ Resources:
   #   DependsOn: ApplicationResourceGroup
 
 Outputs:
-  WebEndpoint:
+  FunctionOneEndpoint:
     Description: API Gateway endpoint URL
-    Value: !Sub "https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/"
+    Value: !Sub "https://${Gateway}.execute-api.${AWS::Region}.amazonaws.com/staging/FunctionOne"
