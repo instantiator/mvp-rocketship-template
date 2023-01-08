@@ -13,14 +13,14 @@ The rocket ship design...
 Included in this template:
 
 - [x] SAM template
-- [x] Functions (Lambda)
+- [x] Sample function (Lambda)
 - [x] API Gateway
 - [x] Database (DynamoDb)
 - [x] Auth (Cognito)
 
 Not included in this template:
 
-* Web and mobile apps
+* Web and mobile client apps
 
 ## AWS services and costs
 
