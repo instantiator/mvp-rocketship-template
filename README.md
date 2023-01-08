@@ -2,6 +2,10 @@
 
 A simple template to develop, publish, and test a simple .NET service backend on AWS, with serverless Lambda functions, supported by DynamoDb, behind an API Gateway, and protected by Cognito auth. 🚀
 
+_Hopefully this will accelerate some early prototyping for some of my projects, and perhaps you'll find it useful as a reference too._
+
+## Design
+
 The rocket ship design...
 
 ![A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.](documentation/images/rocket-mvp.png "A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.")
@@ -12,7 +16,9 @@ The rocket ship design...
 - [x] Database (DynamoDb)
 - [x] Auth (Cognito)
 
-## AWS services
+## AWS services and costs
+
+AWS should come with a warning - if you exceed the free tier, you'll be billed. There's no easy way to set a cap on consumption, so keep an eye on your usage.
 
 This design shouldn't be too hard on the budget during development and prototyping. Here's a quick breakdown of each AWS service used, and their free tiers:
 
