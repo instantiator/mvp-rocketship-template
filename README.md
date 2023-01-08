@@ -45,7 +45,7 @@ brew install --cask dotnet-sdk
   aws-vault add administrator
   ```
 * Add the profile to `~/.aws/config`, eg.
-  ```toml
+  ```ini
   [profile administrator]
   region=eu-west-2
   output=json
