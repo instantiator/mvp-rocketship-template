@@ -32,6 +32,8 @@ This design shouldn't be too hard on the budget during development and prototypi
 
 ## Prerequisites
 
+This template assume you're working on a Mac with [Homebrew](https://brew.sh/) installed and `bash` available. If not, very little should be different - but you'll need alternative commands for your OS to install the tools.
+
 ```shell
 brew install awscli
 brew install aws-sam-cli
