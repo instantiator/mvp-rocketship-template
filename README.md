@@ -8,12 +8,12 @@ A simple template to develop, publish, and test a simple .NET service behind an 
 - [x] Functions (Lambda)
 - [x] API Gateway
 - [x] Database (DynamoDb)
-- [ ] Auth (Cognito)
+- [x] Auth (Cognito)
 
 ## Progress
 
 - [x] Skeleton function, with template, build and deployment support
-- [ ] Support full basic MVP design
+- [x] Support full basic MVP design
 - [ ] Support testing
 
 ## AWS services
