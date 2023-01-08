@@ -16,6 +16,20 @@ A simple template to develop, publish, and test a simple .NET service behind an 
 - [ ] Support full basic MVP design
 - [ ] Support testing
 
+## AWS services
+
+This design shouldn't be too strenuous on the budget when developing and prototyping. Here's a quick breakdown of each AWS service used, and their free tiers:
+
+| Service | Purpose | Free tier | Free limit |
+|-|-|-|-|
+| CloudFormation | Deployment stacks | Always free | 1k handler operations pcm per account |
+| DynamoDb | Data storage | Always free | 25Gb storage; 200m requests pcm |
+| Lambda | Serverless functions | Always free | 1m requests pcm; 3.2m secs compute pcm |
+| API Gateway | API endpoints | 12 months | 1m API calls pcm |
+| Cognito | Authentication | Always free | 50k active users pcm |
+
+* AWS free tiers and specifics for each service: https://aws.amazon.com/free/
+
 ## Prerequisites
 
 ```shell
