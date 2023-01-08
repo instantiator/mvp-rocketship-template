@@ -10,11 +10,17 @@ The rocket ship design...
 
 ![A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.](documentation/images/rocket-mvp.png "A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.")
 
+Included in this template:
+
 - [x] SAM template
 - [x] Functions (Lambda)
 - [x] API Gateway
 - [x] Database (DynamoDb)
 - [x] Auth (Cognito)
+
+Not included in this template:
+
+* Web and mobile apps
 
 ## AWS services and costs
 
@@ -117,6 +123,24 @@ To manage the keychain for aws-vault, you'll want to import it into the Keychain
 * File / Import Items...
 * Keychains are located in: `~/Library/Keychains`
 * Import this file: `aws-vault.keychain-db`
+
+### Client apps
+
+Client apps are assumed to be simple (perhaps a [SPA](https://en.wikipedia.org/wiki/Single-page_application)), and can be hosted anywhere.
+
+I've used Blazor webasm in the past to build a simple responsive app quickly, and can recommend it - but you may already have a solution (perhaps a trendy javascript or TS framework) in mind.
+
+### CORS
+
+The gateway is set to stage `staging`. It should be set per environment.
+
+CORS on the gateway is very permissive, but can be tightened up once you know your testing and live application domains.
+
+### LocalStack
+
+This template was originally proposed with [LocalStack](https://localstack.cloud/) in mind. It's a nice implementation of the AWS APIs that allows local deployment.
+
+However, the Community tier for LocalStack does not support API Gateway, and the Pro tier is slightly too costly to develop the framework against. I've abandoned it for now.
 
 ## Acknowledgements
 
