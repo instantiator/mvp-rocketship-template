@@ -18,7 +18,7 @@ A simple template to develop, publish, and test a simple .NET service behind an 
 
 ## AWS services
 
-This design shouldn't be too strenuous on the budget when developing and prototyping. Here's a quick breakdown of each AWS service used, and their free tiers:
+This design shouldn't be too hard on the budget during development and prototyping. Here's a quick breakdown of each AWS service used, and their free tiers:
 
 | Service | Purpose | Free tier | Free limit |
 |-|-|-|-|
