@@ -150,6 +150,16 @@ GET from the notes endpoint, to see how many notes there are:
 curl -H "Authorization: Bearer $ID_TOKEN" https://endpoint.uri.etc/staging/FunctionOne/notes
 ```
 
+## Tidying up
+
+Finished? Tidy up so that resources don't accidentally incur costs. Particularly as, by default, some of your endpoints aren't protected by Cognito.
+
+```shell
+./delete-stack-aws.sh -a <aws-profile> -s <stack-name>
+```
+
+You could also delete the stack from the CloudFormation AWS console.
+
 ## Misc notes
 
 ### OS X aws-vault keychain access
