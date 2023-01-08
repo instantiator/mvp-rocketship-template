@@ -1,18 +1,20 @@
 # mvp-serverless-app-template
 
-A simple template to develop, publish, and test a simple service behind an API gateway.
+A simple template to develop, publish, and test a simple .NET service behind an API gateway on AWS.
 
 ![A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.](documentation/images/rocket-mvp.png "A diagram illustrating several services, each with access to a database; behind an API gateway, which has access to an auth service. A web app and mobile app both have access to the API Gateway and auth service, too.")
 
+- [x] SAM template
 - [x] Functions (Lambda)
 - [x] API Gateway
 - [x] Database (DynamoDb)
 - [ ] Auth (Cognito)
 
-## In development
+## Progress
 
 - [x] Skeleton function, with template, build and deployment support
 - [ ] Support full basic MVP design
+- [ ] Support testing
 
 ## Prerequisites
 
