@@ -34,7 +34,7 @@ Resources:
       #     Parameters:
       #       Location: s3://bucket/swagger.yaml
       Auth:
-        #DefaultAuthorizer: CognitoAuthorizer
+        DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt UserPool.Arn

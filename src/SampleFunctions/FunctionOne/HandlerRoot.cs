@@ -10,10 +10,12 @@ public class HandlerRoot
     [LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
     public async Task<APIGatewayProxyResponse> Handle(APIGatewayProxyRequest request)
     {
+        var email = request.RequestContext.Authorizer?.Claims["email"];
+
         return new APIGatewayProxyResponse()
         {
             StatusCode = 200,
-            Body = "ok"
+            Body = $"ok; email={email ?? "(null)"}"
         };
     }
 }
