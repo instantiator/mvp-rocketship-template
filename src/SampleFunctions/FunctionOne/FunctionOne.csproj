@@ -11,5 +11,6 @@
     <PackageReference Include="Amazon.Lambda.Core" Version="2.1.0" />
     <PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.8.2" />
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.3.0" />
+    <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.101.20" />
   </ItemGroup>
 </Project>

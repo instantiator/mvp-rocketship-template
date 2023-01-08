@@ -102,16 +102,52 @@ You may need to use the `--region` parameter if your default region is not set t
 
 `cognito-client-id` and `cognito-user-pool-id` can be obtained from the deployed stack outputs.
 
-Use the `IdToken` output from this script as the `Authorization: Bearer` heading value in calls to the API Gateway. eg.
+You could use the `IdToken` output from this script as the `Authorization: Bearer` heading value in calls to the API Gateway. eg.
 
 ```shell
-curl -H "Authorization: Bearer <IdToken>" https://gateway.endpoint.uri.etc.
+curl -H "Authorization: Bearer <IdToken>" https://endpoint.uri.etc.
 ```
 
-For subsequent calls, you can use the output from `get-user-id-token.sh`, eg.
+For all subsequent calls where you need a token, you can use the output from `get-user-id-token.sh`, eg.
 
 ```shell
 export ID_TOKEN=$(auth-scripts/get-user-id-token.sh -u <username> -p <password> -ci <cognito-client-id>)
+curl -H "Authorization: Bearer $ID_TOKEN" https://endpoint.uri.etc.
+```
+
+## Exercising the functions
+
+To illustrate the flexibility, `FunctionOne` actually contains two handlers, and the template deploys two functions - one for each.
+
+For convenience of exploration, each deployed function is also mapped to two endpoints (one with auth, one without). When developing your application, give some though to which endpoints need authentication and which don't.
+
+| Handler | Endpoint | Method | Notes |
+|-|-|-|-|
+| `FunctionOne.HandlerRoot:Handle` | /FunctionOne/ | Any | Returns "ok". | 
+| `FunctionOne.HandlerRoot:Handle` | /FunctionOne/noauth | Any | As above, but no auth required. |
+| `FunctionOne.HandlerNotes:Handle` | /FunctionOne/notes/ | Get | Returns a count of the number of notes in the database table. |
+| `FunctionOne.HandlerNotes:Handle` | /FunctionOne/notes/ | Post | Adds a new note to the database table. |
+| `FunctionOne.HandlerNotes:Handle` | /FunctionOne/notes/noauth | Get | As above, but no auth required. |
+| `FunctionOne.HandlerNotes:Handle` | /FunctionOne/notes/noauth | Post | As above, but no auth required. |
+
+### Quick test
+
+Retrieve an id token for this user:
+
+```shell
+export ID_TOKEN=$(auth-scripts/get-user-id-token.sh -u <test-user-email> -p <password> -ci <client-id>)
+```
+
+POST to the notes endpoint, to add a new note to the table:
+
+```shell
+curl -H "Authorization: Bearer $ID_TOKEN" -X POST https://endpoint.uri.etc/staging/FunctionOne/notes
+```
+
+GET from the notes endpoint, to see how many notes there are:
+
+```shell
+curl -H "Authorization: Bearer $ID_TOKEN" https://endpoint.uri.etc/staging/FunctionOne/notes
 ```
 
 ## Misc notes

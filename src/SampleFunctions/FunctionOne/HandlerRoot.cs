@@ -5,7 +5,7 @@ using Amazon.Lambda.Serialization.SystemTextJson;
 
 namespace FunctionOne;
 
-public class HandlerOne
+public class HandlerRoot
 {
     [LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
     public async Task<APIGatewayProxyResponse> Handle(APIGatewayProxyRequest request)
@@ -17,4 +17,3 @@ public class HandlerOne
         };
     }
 }
-

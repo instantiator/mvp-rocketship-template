@@ -34,47 +34,69 @@ Resources:
       #     Parameters:
       #       Location: s3://bucket/swagger.yaml
       Auth:
-        DefaultAuthorizer: CognitoAuthorizer
+        #DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt UserPool.Arn
      
-  FunctionOne:
+  FunctionOneRoot:
     Type: AWS::Serverless::Function
     Properties:
-      Description: A simple example includes a .NET Core WebAPI App with DynamoDB table.
+      Description: A simple serverless function - returns ok.
       CodeUri: ./src/SampleFunctions/FunctionOne/
-      Handler: FunctionOne::FunctionOne.HandlerOne::Handle
+      Handler: FunctionOne::FunctionOne.HandlerRoot::Handle
       Runtime: dotnet6
       MemorySize: 1024
-      Environment:
-        Variables:
-          SAMPLE_TABLE: !Ref DatabaseTable
-      Policies:
-      - DynamoDBCrudPolicy:
-          TableName: !Ref DatabaseTable
       Events:
-        ProxyResource:
+        RootResourceNoAuth:
           Type: Api
           Properties:
-            Path: /FunctionOne/{proxy+}
-            Method: get # was ANY
+            Path: /FunctionOne/noauth
+            Method: get
             RestApiId: !Ref ApiGateway
-            Auth: # optional per endpoint
-              Authorizer: CognitoAuthorizer
         RootResource:
           Type: Api
           Properties:
             Path: /FunctionOne
-            Method: get # was ANY
+            Method: get
             RestApiId: !Ref ApiGateway
             Auth: # optional per endpoint
               Authorizer: CognitoAuthorizer
 
-  DatabaseTable:
+  FunctionOneNotes:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: A simple serverless function - GET to count notes, POST to add a note.
+      CodeUri: ./src/SampleFunctions/FunctionOne/
+      Handler: FunctionOne::FunctionOne.HandlerNotes::Handle
+      Runtime: dotnet6
+      MemorySize: 1024
+      Environment:
+        Variables:
+          NOTES_TABLE: !Ref NotesDbTable
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName: !Ref NotesDbTable
+      Events:
+        NotesResource:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/notes
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+            Auth: # optional per endpoint
+              Authorizer: CognitoAuthorizer
+        NotesResourceNoAuth:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/notes/noauth
+            Method: ANY
+            RestApiId: !Ref ApiGateway
+
+  NotesDbTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName: simple-table
+      TableName: notes
       PrimaryKey:
         Name: Id
         Type: String
