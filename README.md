@@ -18,7 +18,7 @@ A simple template to develop, publish, and test a simple .NET service behind an 
 
 ## Prerequisites
 
-```
+```shell
 brew install awscli
 brew install aws-sam-cli
 brew install --cask aws-vault
@@ -41,11 +41,11 @@ brew install --cask dotnet-sdk
 ### Set up your local machine
 
 * Add the credentials to `aws-vault`, ie.
-  ```
+  ```shell
   aws-vault add administrator
   ```
 * Add the profile to `~/.aws/config`, eg.
-  ```
+  ```toml
   [profile administrator]
   region=eu-west-2
   output=json
