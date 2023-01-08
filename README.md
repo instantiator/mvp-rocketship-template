@@ -10,12 +10,6 @@ A simple template to develop, publish, and test a simple .NET service behind an 
 - [x] Database (DynamoDb)
 - [x] Auth (Cognito)
 
-## Progress
-
-- [x] Skeleton function, with template, build and deployment support
-- [x] Support full basic MVP design
-- [ ] Support testing
-
 ## AWS services
 
 This design shouldn't be too hard on the budget during development and prototyping. Here's a quick breakdown of each AWS service used, and their free tiers:
