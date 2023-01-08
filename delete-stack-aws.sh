@@ -10,16 +10,16 @@ Deletes the specified stack.
 Assumes aws-vault installed and your profile is created.
 
 Options:
-    -p <profile> --profile <profile>   Sets the profile to use (see: ~/.aws/config and aws-vault list)
-    -s <name>    --stack <name>        Sets the name of the stack (required)
-    -h           --help                Prints this help message and exits
+    -a <profile> --aws-profile <profile> Sets the profile to use (see: ~/.aws/config and aws-vault list)
+    -s <name>    --stack <name>          Sets the name of the stack (required)
+    -h           --help                  Prints this help message and exits
 EOF
 }
 
 # parameters
 while [ -n "$1" ]; do
   case $1 in
-  -p | --profile)
+  -a | --aws-profile)
     shift
     PROFILE=$1
     ;;

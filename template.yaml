@@ -10,12 +10,21 @@ Globals:
   Api:
     TracingEnabled: true
 
-Resources:
+Parameters:
+  CognitoTestUserEmail:
+    Description: Email address of the created user
+    Type: String
+  ApiStageName:
+    Default: staging
+    Description: StageName of API Gateway deployment
+    Type: String
 
-  Gateway:
+Resources:
+  ApiGateway:
     Type: AWS::Serverless::Api
+    DependsOn: UserPool
     Properties:
-      StageName: staging
+      StageName: !Ref ApiStageName
       Cors: "'*'" # very permissive CORS for now
       # Cors: "'www.example.com'"  # SAM will automatically add AllowMethods with a list of methods for this API
       # DefinitionBody: # Pull in an OpenApi definition from S3
@@ -24,12 +33,11 @@ Resources:
       #     # Replace "bucket" with your bucket name
       #     Parameters:
       #       Location: s3://bucket/swagger.yaml
-      # Auth:
-      #   DefaultAuthorizer: MyCognitoAuthorizer
-      #   Authorizers:
-      #     MyCognitoAuthorizer:
-      #       UserPoolArn:
-      #         Fn::GetAtt: [MyCognitoUserPool, Arn]
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt UserPool.Arn
      
   FunctionOne:
     Type: AWS::Serverless::Function
@@ -51,15 +59,17 @@ Resources:
           Properties:
             Path: /FunctionOne/{proxy+}
             Method: get # was ANY
-            RestApiId:
-              Ref: Gateway
+            RestApiId: !Ref ApiGateway
+            Auth: # optional per endpoint
+              Authorizer: CognitoAuthorizer
         RootResource:
           Type: Api
           Properties:
             Path: /FunctionOne
             Method: get # was ANY
-            RestApiId:
-              Ref: Gateway
+            RestApiId: !Ref ApiGateway
+            Auth: # optional per endpoint
+              Authorizer: CognitoAuthorizer
 
   DatabaseTable:
     Type: AWS::Serverless::SimpleTable
@@ -71,6 +81,37 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: MvpAppUserPool
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: false
+  
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false # secret is only for server-side clients
+      ExplicitAuthFlows:
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  UserPoolTestUser:
+    Type: AWS::Cognito::UserPoolUser
+    Properties:
+      DesiredDeliveryMediums:
+        - EMAIL
+      Username: !Ref CognitoTestUserEmail
+      UserPoolId: !Ref UserPool
 
   # ApplicationResourceGroup:
   #   Type: AWS::ResourceGroups::Group
@@ -95,5 +136,11 @@ Resources:
 
 Outputs:
   FunctionOneEndpoint:
-    Description: API Gateway endpoint URL
-    Value: !Sub "https://${Gateway}.execute-api.${AWS::Region}.amazonaws.com/staging/FunctionOne"
+    Description: API Gateway endpoint URL with auth
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/staging/FunctionOne"
+  UserPoolId:
+    Description: "ID of the Cognito User Pool"
+    Value: !Ref UserPool
+  CognitoClientId:
+    Description: "ID of the Cognito User Pool Client"
+    Value: !Ref UserPoolClient
