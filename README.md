@@ -192,5 +192,5 @@ However, the Community tier for LocalStack does not support API Gateway, and the
 
 With thanks to...
 
-* [Nathaniel Beckstead](https://github.com/scriptingislife) for this guide: [How to add Cognito to your AWS SAM app](https://scriptingis.life/Cognito-AWS-SAM)
-
+* [Nathaniel Beckstead](https://github.com/scriptingislife), for: [How to add Cognito to your AWS SAM app](https://scriptingis.life/Cognito-AWS-SAM)
+* Jeff Adams, [ten mile square](https://tenmilesquare.com/), for: [AWS SAM API with Cognito](https://tenmilesquare.com/resources/cloud-infrastructure/aws-sam-api-with-cognito/)
