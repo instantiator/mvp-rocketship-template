@@ -103,7 +103,7 @@ Resources:
   NotesDbTable:
     Type: AWS::Serverless::SimpleTable
     Properties:
-      TableName: notes
+      TableName: !Sub ${AWS::StackName}-notes
       PrimaryKey:
         Name: Id
         Type: String
