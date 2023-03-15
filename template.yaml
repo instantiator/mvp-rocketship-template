@@ -34,7 +34,8 @@ Resources:
       #     Parameters:
       #       Location: s3://bucket/swagger.yaml
       Auth:
-        DefaultAuthorizer: CognitoAuthorizer
+        # Do not provide a DefaultAuthorizer - instead mark endpoints that require authorization
+        # DefaultAuthorizer: CognitoAuthorizer
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt UserPool.Arn
@@ -62,6 +63,9 @@ Resources:
             RestApiId: !Ref ApiGateway
             Auth: # optional per endpoint
               Authorizer: CognitoAuthorizer
+              AuthorizationScopes: 
+                - profile
+                - aws.cognito.signin.user.admin
 
   FunctionOneNotes:
     Type: AWS::Serverless::Function
@@ -78,6 +82,12 @@ Resources:
       - DynamoDBCrudPolicy:
           TableName: !Ref NotesDbTable
       Events:
+        NotesResourceNoAuth:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/notes/noauth
+            Method: ANY
+            RestApiId: !Ref ApiGateway
         NotesResource:
           Type: Api
           Properties:
@@ -86,12 +96,9 @@ Resources:
             RestApiId: !Ref ApiGateway
             Auth: # optional per endpoint
               Authorizer: CognitoAuthorizer
-        NotesResourceNoAuth:
-          Type: Api
-          Properties:
-            Path: /FunctionOne/notes/noauth
-            Method: ANY
-            RestApiId: !Ref ApiGateway
+              AuthorizationScopes: 
+                - profile
+                - aws.cognito.signin.user.admin
 
   NotesDbTable:
     Type: AWS::Serverless::SimpleTable
@@ -121,11 +128,48 @@ Resources:
   UserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
-      UserPoolId: !Ref UserPool
-      GenerateSecret: false # secret is only for server-side clients
+      AccessTokenValidity: 60 # (minutes) default value.
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - code
+        - implicit
+      AllowedOAuthScopes:
+        - aws.cognito.signin.user.admin
+        - email
+        - openid
+        - profile
+      CallbackURLs:
+        - https://instantiator.dev/auth-redirect-pages/logged_in.html
+      ClientName: !Sub ${AWS::StackName}-UserPoolClient
+      EnableTokenRevocation: true # default value.
       ExplicitAuthFlows:
-        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_CUSTOM_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_USER_SRP_AUTH
+      IdTokenValidity: 60 # (minutes) default value.
+      LogoutURLs:
+        - https://instantiator.dev/auth-redirect-pages/logged_out.html
+      PreventUserExistenceErrors: ENABLED # default value.
+      RefreshTokenValidity: 30 # (days) default value.
+      SupportedIdentityProviders:
+        - COGNITO
+      TokenValidityUnits:
+        AccessToken: minutes
+        IdToken: minutes
+        RefreshToken: days
+      UserPoolId: !Ref UserPool
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      UserPoolId: !Ref UserPool
+      Domain: !Sub '${AWS::StackName}'
+
+  UserPoolCustomisation:
+    Type: AWS::Cognito::UserPoolUICustomizationAttachment
+    Properties: 
+      ClientId: !Ref UserPoolClient
+      UserPoolId: !Ref UserPool
 
   UserPoolTestUser:
     Type: AWS::Cognito::UserPoolUser
@@ -145,3 +189,7 @@ Outputs:
   CognitoClientId:
     Description: "ID of the Cognito User Pool Client"
     Value: !Ref UserPoolClient
+  TestUserEmail:
+    Description: "Email address associated with the test user"
+    Value: !Ref CognitoTestUserEmail
+  

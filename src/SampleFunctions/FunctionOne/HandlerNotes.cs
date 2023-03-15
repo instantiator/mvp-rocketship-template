@@ -50,7 +50,7 @@ public class HandlerNotes
                     }
                 };
                 var putResponse = await dbClient.PutItemAsync(putRequest);
-                output = $"put code {putResponse.HttpStatusCode}";
+                output = $"post code {putResponse.HttpStatusCode}";
                 break;
             default:
                 throw new ArgumentException($"Method {request.HttpMethod} not implemented.");
