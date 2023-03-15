@@ -6,7 +6,7 @@ _Hopefully this will accelerate some early prototyping for some of my projects, 
 
 ## Errata
 
-A number of issues have been uncovered in the first release of this template that I'm intending to fix:
+A number of issues have been shaken out in the first release of this template that I'm intending to fix:
 
 * The APIs currently require the user's _identity token_. It's preferable to use an _access token_.
 
