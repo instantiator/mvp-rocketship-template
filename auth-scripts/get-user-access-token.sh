@@ -5,7 +5,7 @@ set -o pipefail
 
 usage() {
   cat << EOF
-Gets a user's id token.
+Gets a user's access token.
 
 Options:
     -u <email>     --test-user <email>             The test user email address
@@ -76,7 +76,7 @@ USER_TOKENS_JSON=$(aws cognito-idp initiate-auth \
     --client-id ${CLIENT_ID} \
     --output json)
 
-echo $USER_TOKENS_JSON | jq -r ".AuthenticationResult.IdToken"
+echo $USER_TOKENS_JSON | jq -r ".AuthenticationResult.AccessToken"
 
-# Use the Id Token as the auth bearer heading in calls to the API Gateway
+# Use the Access Token as the auth bearer heading in calls to the API Gateway
 # eg. curl -H "Authorization: Bearer <IdToken>" https://gateway.endpoint.uri.etc.

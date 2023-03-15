@@ -28,6 +28,8 @@ public class HandlerNotes
         };
         var dbClient = new AmazonDynamoDBClient(clientConfig);
 
+        var sub = request.RequestContext.Authorizer?.Claims["sub"];
+
         string? output;
         switch (request.HttpMethod.ToLower()) 
         {
@@ -44,7 +46,7 @@ public class HandlerNotes
                     Item = new Dictionary<string, AttributeValue>()
                     {
                         { "Id", new AttributeValue { S = id }},
-                        { "Note", new AttributeValue { S = $"Note with id: {id}" }},
+                        { "Note", new AttributeValue { S = $"Note with id: {id}, created by subject with id: {sub}" }},
                     }
                 };
                 var putResponse = await dbClient.PutItemAsync(putRequest);

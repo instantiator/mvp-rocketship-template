@@ -76,3 +76,19 @@ aws-vault exec $PROFILE --no-session -- \
     --capabilities CAPABILITY_IAM \
     --resolve-s3 \
     --parameter-overrides CognitoTestUserEmail=$TEST_USER_EMAIL
+
+# get outputs from stack
+eval $(util-scripts/export-stack-outputs.sh -a $PROFILE -s $STACK_NAME -x OUT_)
+export -p | grep OUT_
+echo
+
+# update the test user password
+TEST_USER_PASSWORD="testpass1"
+echo "Setting password for ${TEST_USER_EMAIL} to: ${TEST_USER_PASSWORD}"
+echo
+aws-vault exec $PROFILE --no-session -- \
+  aws cognito-idp admin-set-user-password \
+    --user-pool-id $OUT_UserPoolId \
+    --username $TEST_USER_EMAIL \
+    --password $TEST_USER_PASSWORD \
+    --permanent
