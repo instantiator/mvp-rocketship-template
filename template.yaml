@@ -18,6 +18,14 @@ Parameters:
     Default: staging
     Description: StageName of API Gateway deployment
     Type: String
+  AuthPageUrl:
+    Type: String
+    Default: "https://instantiator.dev/auth-redirect-pages/index.html"
+    Description: Base url for an auth testing page
+  AuthRedirectUri:
+    Type: String
+    Default: "https://instantiator.dev/auth-redirect-pages/logged_in.html"
+    Description: Uri to redirect to on successful authentication
 
 Resources:
   ApiGateway:
@@ -205,4 +213,29 @@ Outputs:
   TestUserEmail:
     Description: "Email address associated with the test user"
     Value: !Ref CognitoTestUserEmail
-  
+  AuthTestingUrl:
+    Description: "Auth testing tool"
+    Value: !Sub 
+      - '${AuthPageUrl}?domain_prefix=${Prefix}&region=${Region}&client_id=${ClientId}&redirect_uri=${AuthRedirectUri}'
+      - Prefix: !Sub '${AWS::StackName}'
+        Region: !Sub '${AWS::Region}'
+        ClientId: !Ref UserPoolClient
+  CognitoLoginUrl:
+    Description: "Cognito login url"
+    Value: !Sub 
+      - 'https://${Prefix}.auth.${Region}.amazoncognito.com/login?response_type=code&client_id=${ClientId}&redirect_uri=${AuthRedirectUri}'
+      - Prefix: !Sub '${AWS::StackName}'
+        Region: !Sub '${AWS::Region}'
+        ClientId: !Ref UserPoolClient
+  CognitoTokenEndpoint:
+    Description: "POST code to this endpoint for user access, refresh, and id tokens. See: https://docs.aws.amazon.com/cognito/latest/developerguide/token-endpoint.html"
+    Value: !Sub 
+      - 'https://${Prefix}.auth.${Region}.amazoncognito.com/oauth2/token'
+      - Prefix: !Sub '${AWS::StackName}'
+        Region: !Sub '${AWS::Region}'
+  CognitoUserInfoEndpoint:
+    Description: "GET this endpoint for user info. See: https://docs.aws.amazon.com/cognito/latest/developerguide/userinfo-endpoint.html"
+    Value: !Sub 
+      - 'https://${Prefix}.auth.${Region}.amazoncognito.com/oauth2/userInfo'
+      - Prefix: !Sub '${AWS::StackName}'
+        Region: !Sub '${AWS::Region}'
