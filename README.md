@@ -133,7 +133,7 @@ The template deploys two functions - one, called the root handler, is responsibl
 When developing your application, give some though to which endpoints need authentication and which don't. `template.yaml` applies an authorizer to the notes endpoint, but not to the root endpoint or to the `OPTIONS` events.
 
 | Handler | Endpoint | Method | Auth | Notes |
-|-|-|-|-|
+|-|-|-|-|-|
 | `FunctionOne.HandlerRoot:Handle` | `/FunctionOne` | `GET` | Not required. | Returns "ok". | 
 | `FunctionOne.HandlerRoot:Handle` | `/FunctionOne` | `OPTIONS` | Not required. | Supports a CORS pre-flight request for headers. | 
 | `FunctionOne.HandlerNotes:Handle` | `/FunctionOne/notes` | `GET` | Access token required. | Returns a count of the number of notes in the database table. |
