@@ -28,9 +28,7 @@ namespace EndpointTests
         protected string CognitoUserPoolId { get; private set; }
 
         protected string FunctionOneEndpoint { get; private set; }
-        protected string FunctionOneEndpoint_NoAuth => FunctionOneEndpoint + "/noauth";
         protected string FunctionOneNotesEndpoint => FunctionOneEndpoint + "/notes";
-        protected string FunctionOneNotesEndpoint_NoAuth => FunctionOneEndpoint + "/notes/noauth";
 
         protected async Task<string> GetIdTokenAsync()
             => await GetIdTokenAsync(CognitoUserPoolId, CognitoClientId, TestUserEmail, TestUserPassword);

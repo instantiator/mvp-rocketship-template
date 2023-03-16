@@ -13,9 +13,19 @@ namespace FunctionOne;
 
 public class HandlerNotes
 {
+    public static Dictionary<string, string> ALL_HEADERS = new Dictionary<string, string>()
+    {
+        { "Access-Control-Allow-Headers", "Content-Type,Authorization" },
+        { "Access-Control-Allow-Origin", "https://localhost:5001" },
+        { "Access-Control-Allow-Methods", "OPTIONS,GET,POST" },
+        { "Access-Control-Allow-Credentials", "true"}
+    };
+
     [LambdaSerializer(typeof(DefaultLambdaJsonSerializer))]
     public async Task<APIGatewayProxyResponse> Handle(APIGatewayProxyRequest request)
     {
+        Console.WriteLine($"HTTP Method: {request.HttpMethod}");
+
         var tableName = Environment.GetEnvironmentVariable("NOTES_TABLE");
         var region = RegionEndpoint.GetBySystemName(Environment.GetEnvironmentVariable("AWS_REGION"));
 
@@ -36,7 +46,7 @@ public class HandlerNotes
             case "get":
                 var scanRequest = new ScanRequest { TableName = tableName };
                 var response = await dbClient.ScanAsync(scanRequest);
-                output = $"{tableName}: {response.Count}";
+                output = $"Notes in {tableName}: {response.Count}";
                 break;
             case "post":
                 var id = Guid.NewGuid().ToString();
@@ -50,7 +60,10 @@ public class HandlerNotes
                     }
                 };
                 var putResponse = await dbClient.PutItemAsync(putRequest);
-                output = $"post code {putResponse.HttpStatusCode}";
+                output = $"put db code {putResponse.HttpStatusCode}";
+                break;
+            case "options":
+                output = "Endpoint options requested.";
                 break;
             default:
                 throw new ArgumentException($"Method {request.HttpMethod} not implemented.");
@@ -59,7 +72,8 @@ public class HandlerNotes
         return new APIGatewayProxyResponse()
         {
             StatusCode = 200,
-            Body = output ?? "(null)"
+            Body = output ?? "(null)",
+            Headers = ALL_HEADERS
         };
     }
 }

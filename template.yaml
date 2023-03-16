@@ -25,14 +25,21 @@ Resources:
     DependsOn: UserPool
     Properties:
       StageName: !Ref ApiStageName
-      Cors: "'*'" # very permissive CORS for now
-      # Cors: "'www.example.com'"  # SAM will automatically add AllowMethods with a list of methods for this API
-      # DefinitionBody: # Pull in an OpenApi definition from S3
-      #   'Fn::Transform':
-      #     Name: 'AWS::Include'
-      #     # Replace "bucket" with your bucket name
-      #     Parameters:
-      #       Location: s3://bucket/swagger.yaml
+      GatewayResponses:
+        DEFAULT_4XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Headers: "'Content-Type,Authorization'"
+              Access-Control-Allow-Origin: "'https://localhost:5001'"
+              Access-Control-Allow-Methods: "'OPTIONS,GET,PUT'"
+              Access-Control-Allow-Credentials: "'true'"
+        DEFAULT_5XX:
+          ResponseParameters:
+            Headers:
+              Access-Control-Allow-Headers: "'Content-Type,Authorization'"
+              Access-Control-Allow-Origin: "'https://localhost:5001'"
+              Access-Control-Allow-Methods: "'OPTIONS,GET,PUT'"
+              Access-Control-Allow-Credentials: "'true'"
       Auth:
         # Do not provide a DefaultAuthorizer - instead mark endpoints that require authorization
         # DefaultAuthorizer: CognitoAuthorizer
@@ -49,23 +56,18 @@ Resources:
       Runtime: dotnet6
       MemorySize: 1024
       Events:
-        RootResourceNoAuth:
-          Type: Api
-          Properties:
-            Path: /FunctionOne/noauth
-            Method: get
-            RestApiId: !Ref ApiGateway
         RootResource:
           Type: Api
           Properties:
             Path: /FunctionOne
             Method: get
             RestApiId: !Ref ApiGateway
-            Auth: # optional per endpoint
-              Authorizer: CognitoAuthorizer
-              AuthorizationScopes: 
-                - profile
-                - aws.cognito.signin.user.admin
+        RootResourceOptions:
+          Type: Api
+          Properties:
+            Path: /FunctionOne
+            Method: options
+            RestApiId: !Ref ApiGateway
 
   FunctionOneNotes:
     Type: AWS::Serverless::Function
@@ -82,23 +84,34 @@ Resources:
       - DynamoDBCrudPolicy:
           TableName: !Ref NotesDbTable
       Events:
-        NotesResourceNoAuth:
-          Type: Api
-          Properties:
-            Path: /FunctionOne/notes/noauth
-            Method: ANY
-            RestApiId: !Ref ApiGateway
-        NotesResource:
+        GetNotesResource:
           Type: Api
           Properties:
             Path: /FunctionOne/notes
-            Method: ANY
+            Method: get
             RestApiId: !Ref ApiGateway
             Auth: # optional per endpoint
               Authorizer: CognitoAuthorizer
               AuthorizationScopes: 
                 - profile
                 - aws.cognito.signin.user.admin
+        PostNoteResource:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/notes
+            Method: post
+            RestApiId: !Ref ApiGateway
+            Auth: # optional per endpoint
+              Authorizer: CognitoAuthorizer
+              AuthorizationScopes: 
+                - profile
+                - aws.cognito.signin.user.admin
+        NotesResourceOptions:
+          Type: Api
+          Properties:
+            Path: /FunctionOne/notes
+            Method: options
+            RestApiId: !Ref ApiGateway
 
   NotesDbTable:
     Type: AWS::Serverless::SimpleTable
